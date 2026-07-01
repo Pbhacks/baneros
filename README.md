@@ -1,4 +1,4 @@
-# Shani OS (Under Development and Upgrade)
+# Shani OS (Under Development and Upgrade) (Live ON: https://shanios.netlify.app/)
 
 Shani OS is a browser-based desktop operating system built with Next.js, React, TypeScript, Tailwind CSS, Framer Motion, and Zustand. It combines a macOS-inspired shell with a modular app system, local persistence, Spotlight-style search, and a browser that can open live sites, reader-mode pages, an About page, and your portfolio.
 
@@ -53,12 +53,6 @@ Create `.env.local` for Supabase features:
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=...
 NEXT_PUBLIC_SUPABASE_ANON_KEY=...
-```
-
-Optional deployment metadata:
-
-```bash
-NEXT_PUBLIC_SITE_URL=https://your-site.netlify.app
 ```
 
 ## Supabase Schema
