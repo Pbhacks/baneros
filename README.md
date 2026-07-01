@@ -1,4 +1,4 @@
-# Shani OS
+# Shani OS (Under Development and Upgrade)
 
 Shani OS is a browser-based desktop operating system built with Next.js, React, TypeScript, Tailwind CSS, Framer Motion, and Zustand. It combines a macOS-inspired shell with a modular app system, local persistence, Spotlight-style search, and a browser that can open live sites, reader-mode pages, an About page, and your portfolio.
 
