@@ -1,0 +1,248 @@
+@import "tailwindcss";
+
+:root {
+  --background: #091021;
+  --foreground: #f4f8ff;
+  --panel: rgba(12, 22, 40, 0.48);
+  --panel-strong: rgba(8, 16, 32, 0.64);
+  --panel-border: rgba(186, 210, 255, 0.34);
+  --text-primary: #edf4ff;
+  --text-muted: rgba(220, 234, 255, 0.72);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-space-grotesk);
+  --font-mono: var(--font-ibm-plex-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-space-grotesk), sans-serif;
+}
+
+[data-theme="light"] {
+  --background: #e9f1fb;
+  --foreground: #0b1625;
+  --panel: rgba(255, 255, 255, 0.5);
+  --panel-strong: rgba(252, 254, 255, 0.66);
+  --panel-border: rgba(70, 98, 142, 0.34);
+  --text-primary: #15243a;
+  --text-muted: rgba(21, 36, 58, 0.72);
+}
+
+[data-theme="dark"] {
+  --background: #091021;
+  --foreground: #f4f8ff;
+  --panel: rgba(12, 22, 40, 0.48);
+  --panel-strong: rgba(8, 16, 32, 0.64);
+  --panel-border: rgba(186, 210, 255, 0.34);
+  --text-primary: #edf4ff;
+  --text-muted: rgba(220, 234, 255, 0.72);
+}
+
+.bg-webos {
+  background-image: linear-gradient(150deg, #0f2244 0%, #0c5464 40%, #91522e 100%);
+}
+
+.bg-webos-sunset {
+  background-image: linear-gradient(150deg, #381b4f 0%, #8f3e34 40%, #f0a63e 100%);
+}
+
+.bg-webos-mint {
+  background-image: linear-gradient(150deg, #06343d 0%, #0d6966 40%, #98b768 100%);
+}
+
+.bg-webos-designer {
+  background-image: url('/os-designer.png');
+  background-size: cover;
+  background-position: center;
+}
+
+.bg-webos-aurora {
+  background-image:
+    radial-gradient(circle at 18% 18%, rgba(115, 255, 218, 0.28), transparent 24%),
+    radial-gradient(circle at 78% 20%, rgba(120, 147, 255, 0.22), transparent 28%),
+    linear-gradient(155deg, #041424 0%, #0c2f4d 40%, #1a1036 100%);
+}
+
+.bg-webos-canyon {
+  background-image:
+    radial-gradient(circle at 50% 12%, rgba(255, 208, 136, 0.22), transparent 26%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 35%),
+    linear-gradient(155deg, #2a0d13 0%, #6b2e26 44%, #d28d46 100%);
+}
+
+.bg-webos-paper {
+  background-image:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.7), rgba(245, 236, 225, 0.82)),
+    radial-gradient(circle at top left, rgba(255, 190, 120, 0.18), transparent 28%),
+    linear-gradient(0deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+  background-size: auto, auto, 18px 18px, 18px 18px;
+}
+
+.bg-webos-paper[data-theme="dark"],
+[data-theme="dark"] .bg-webos-paper {
+  background-image:
+    linear-gradient(145deg, rgba(20, 26, 36, 0.96), rgba(42, 34, 30, 0.92)),
+    radial-gradient(circle at top left, rgba(255, 177, 92, 0.12), transparent 26%),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+.bg-webos-lagoon {
+  background-image:
+    radial-gradient(circle at 16% 16%, rgba(151, 255, 239, 0.24), transparent 22%),
+    radial-gradient(circle at 82% 28%, rgba(57, 182, 255, 0.2), transparent 24%),
+    radial-gradient(circle at 50% 90%, rgba(172, 255, 117, 0.1), transparent 28%),
+    linear-gradient(150deg, #021c22 0%, #0d4d61 44%, #0f7d72 100%);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
+}
+
+button {
+  transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
+  will-change: transform;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+[data-theme="light"] button {
+  filter: saturate(0.98);
+}
+
+.reduce-motion * {
+  animation: none !important;
+  transition: none !important;
+}
+
+.ui-glass {
+  background: var(--panel);
+  border-color: var(--panel-border);
+  color: var(--text-primary);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
+}
+
+.ui-glass-strong {
+  background: var(--panel-strong);
+  border-color: var(--panel-border);
+  color: var(--text-primary);
+  backdrop-filter: blur(24px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.ui-muted {
+  color: var(--text-muted);
+}
+
+.ui-menubar {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.08)),
+    rgba(18, 31, 55, 0.34);
+  border-color: rgba(255, 255, 255, 0.18);
+  color: var(--text-primary);
+  backdrop-filter: blur(28px) saturate(1.2);
+  box-shadow:
+    0 10px 28px rgba(2, 8, 20, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.26);
+}
+
+.ui-menubar button:hover,
+.ui-dock button:hover {
+  transform: none;
+}
+
+.ui-dock {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.08)),
+    rgba(18, 30, 54, 0.32);
+  border-color: rgba(255, 255, 255, 0.24);
+  color: var(--text-primary);
+  backdrop-filter: blur(30px) saturate(1.22);
+  box-shadow:
+    0 18px 38px rgba(2, 10, 24, 0.32),
+    inset 0 1px 0 rgba(255, 255, 255, 0.32);
+}
+
+@keyframes launchpadGlowWave {
+  0%,
+  100% {
+    opacity: 0.78;
+    transform: scale(0.96);
+    filter: blur(6px) saturate(1.08) brightness(0.98);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.07);
+    filter: blur(10px) saturate(1.22) brightness(1.12);
+  }
+}
+
+@keyframes launchpadCoreWave {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.92;
+  }
+
+  50% {
+    transform: translateY(-0.4px) scale(1.018);
+    opacity: 1;
+  }
+}
+
+.launchpad-triangle-halo {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(91, 255, 142, 0.72), transparent 28%),
+    radial-gradient(circle at 78% 78%, rgba(255, 143, 51, 0.54), transparent 30%),
+    radial-gradient(circle at 18% 78%, rgba(255, 46, 209, 0.6), transparent 34%);
+  animation: launchpadGlowWave 3.8s ease-in-out infinite;
+  mix-blend-mode: screen;
+}
+
+.launchpad-triangle-wave {
+  clip-path: polygon(50% 8%, 86% 84%, 14% 84%);
+  background:
+    radial-gradient(circle at 48% 12%, rgba(112, 255, 165, 0.54), transparent 22%),
+    radial-gradient(circle at 74% 76%, rgba(255, 169, 63, 0.28), transparent 24%),
+    radial-gradient(circle at 24% 76%, rgba(255, 62, 212, 0.34), transparent 24%);
+  filter: blur(4px);
+  mix-blend-mode: screen;
+  animation: launchpadCoreWave 4.6s ease-in-out infinite;
+}
+
+.launchpad-triangle-fill {
+  opacity: 0.72;
+  animation: launchpadCoreWave 4.4s ease-in-out infinite;
+}
+
+.launchpad-triangle-outer {
+  opacity: 0.3;
+  filter: blur(5px);
+}
+
+.launchpad-triangle-stroke {
+  animation: launchpadCoreWave 4s ease-in-out infinite;
+  filter:
+    drop-shadow(0 0 2px rgba(255, 255, 255, 0.72))
+    drop-shadow(0 0 6px rgba(255, 56, 204, 0.42))
+    drop-shadow(0 0 8px rgba(88, 255, 154, 0.34));
+}
+
+.launchpad-triangle-inner {
+  opacity: 0.86;
+}
