@@ -21,6 +21,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-space-grotesk), sans-serif;
+  overscroll-behavior: none;
 }
 
 [data-theme="light"] {
@@ -106,6 +107,12 @@ body {
   scrollbar-color: rgba(255, 255, 255, 0.35) transparent;
 }
 
+html,
+body {
+  min-height: 100%;
+  overflow: hidden;
+}
+
 button {
   transition: transform 120ms ease, box-shadow 120ms ease, filter 120ms ease;
   will-change: transform;
@@ -177,6 +184,21 @@ button:active {
     inset 0 1px 0 rgba(255, 255, 255, 0.32);
 }
 
+.ui-dock::-webkit-scrollbar {
+  display: none;
+}
+
+.dock-scroll-clean {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.dock-scroll-clean::-webkit-scrollbar {
+  display: none;
+  height: 0;
+  width: 0;
+}
+
 @keyframes launchpadGlowWave {
   0%,
   100% {
@@ -245,4 +267,17 @@ button:active {
 
 .launchpad-triangle-inner {
   opacity: 0.86;
+}
+
+@media (max-width: 767px) {
+  .ui-glass,
+  .ui-glass-strong,
+  .ui-menubar,
+  .ui-dock {
+    backdrop-filter: blur(18px) saturate(1.08);
+  }
+
+  .ui-dock {
+    max-width: calc(100vw - 0.5rem);
+  }
 }

@@ -121,17 +121,17 @@ const LaunchpadPanel = ({ closeSearch }: { closeSearch: () => void }) => {
       exit={{ opacity: 0, scale: 0.98, y: 8 }}
       transition={{ duration: 0.22 }}
       onClick={(event) => event.stopPropagation()}
-      className="flex h-full flex-col px-8 pb-8 pt-[4.5rem]"
+      className="flex h-full flex-col px-3 pb-4 pt-14 sm:px-8 sm:pb-8 sm:pt-[4.5rem]"
     >
       <div className="mx-auto w-full max-w-4xl">
-        <div className="mx-auto flex max-w-2xl items-center gap-3 rounded-full border border-white/14 bg-white/10 px-5 py-4 shadow-[0_18px_40px_rgba(0,0,0,0.18)]">
-          <Search size={18} className="text-white/60" />
+        <div className="mx-auto flex max-w-2xl items-center gap-3 rounded-2xl border border-white/14 bg-white/10 px-4 py-3 shadow-[0_18px_40px_rgba(0,0,0,0.18)] sm:rounded-full sm:px-5 sm:py-4">
+          <Search size={17} className="text-white/60" />
           <input
             value={query}
             onChange={(event) => onQueryChange(event.target.value)}
             autoFocus
             placeholder="Search apps, commands, or files"
-            className="w-full bg-transparent text-lg text-white outline-none placeholder:text-white/38"
+            className="w-full bg-transparent text-base text-white outline-none placeholder:text-white/38 sm:text-lg"
             onKeyDown={(event) => {
               if (event.key === "ArrowDown") {
                 event.preventDefault();
@@ -154,20 +154,20 @@ const LaunchpadPanel = ({ closeSearch }: { closeSearch: () => void }) => {
           />
         </div>
 
-        <div className="mt-4 text-center text-sm text-white/50">
+        <div className="mt-3 hidden text-center text-sm text-white/50 sm:block">
           Big-screen app searcher for your desktop. Scroll the grid, launch apps, or search files and actions.
         </div>
       </div>
 
-      <div className="mx-auto mt-8 flex min-h-0 w-full max-w-6xl flex-1 gap-6 overflow-hidden">
+      <div className="mx-auto mt-5 flex min-h-0 w-full max-w-6xl flex-1 gap-6 overflow-hidden sm:mt-8">
         <div className="min-h-0 flex-1 overflow-auto pr-2">
           {!query.trim() && suggestedApps.length > 0 && (
-            <section className="mb-8">
-              <div className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.28em] text-white/55">
+            <section className="mb-6 sm:mb-8">
+              <div className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] text-white/55 sm:mb-4 sm:text-sm sm:tracking-[0.28em]">
                 <Sparkles size={14} />
                 Suggested
               </div>
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5">
+              <div className="grid grid-cols-3 gap-3 sm:grid-cols-3 sm:gap-4 xl:grid-cols-5">
                 {suggestedApps.map((item, index) => {
                   const Icon = APP_ICON_MAP[item.app];
                   return (
@@ -176,13 +176,13 @@ const LaunchpadPanel = ({ closeSearch }: { closeSearch: () => void }) => {
                       type="button"
                       onClick={() => runResult(item)}
                       onMouseEnter={() => setActiveIndex(index)}
-                      className={`rounded-[30px] border border-white/10 bg-white/[0.06] p-4 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] ${
+                      className={`min-w-0 rounded-2xl border border-white/10 bg-white/[0.06] p-3 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] sm:rounded-[30px] sm:p-4 ${
                         keyboardItems[activeIndex]?.id === item.id ? "ring-2 ring-cyan-200/50" : ""
                       }`}
                     >
-                      <Icon size={72} />
-                      <div className="mt-4 text-base font-semibold text-white">{APP_LABELS[item.app]}</div>
-                      <div className="mt-1 text-sm text-white/55">{APP_DESCRIPTIONS[item.app]}</div>
+                      <Icon size={56} />
+                      <div className="mt-3 truncate text-xs font-semibold text-white sm:mt-4 sm:text-base">{APP_LABELS[item.app]}</div>
+                      <div className="mt-1 hidden text-sm text-white/55 sm:block">{APP_DESCRIPTIONS[item.app]}</div>
                     </button>
                   );
                 })}
@@ -191,11 +191,11 @@ const LaunchpadPanel = ({ closeSearch }: { closeSearch: () => void }) => {
           )}
 
           {sections.map((section) => (
-            <section key={section.group} className="mb-8">
-              <div className="mb-4 text-sm font-semibold uppercase tracking-[0.28em] text-white/55">
+            <section key={section.group} className="mb-6 sm:mb-8">
+              <div className="mb-3 text-xs font-semibold uppercase tracking-[0.24em] text-white/55 sm:mb-4 sm:text-sm sm:tracking-[0.28em]">
                 {section.group}
               </div>
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-4">
+              <div className="grid grid-cols-3 gap-3 sm:grid-cols-3 sm:gap-4 xl:grid-cols-4">
                 {section.items.map((item) => {
                   const Icon = APP_ICON_MAP[item.app];
                   return (
@@ -209,13 +209,13 @@ const LaunchpadPanel = ({ closeSearch }: { closeSearch: () => void }) => {
                           setActiveIndex(index);
                         }
                       }}
-                      className={`rounded-[30px] border border-white/10 bg-white/[0.05] p-4 text-left ${
+                      className={`min-w-0 rounded-2xl border border-white/10 bg-white/[0.05] p-3 text-left sm:rounded-[30px] sm:p-4 ${
                         keyboardItems[activeIndex]?.id === item.id ? "ring-2 ring-cyan-200/50" : ""
                       }`}
                     >
-                      <Icon size={68} />
-                      <div className="mt-4 text-base font-semibold text-white">{APP_LABELS[item.app]}</div>
-                      <div className="mt-1 text-sm text-white/50">{APP_DESCRIPTIONS[item.app]}</div>
+                      <Icon size={54} />
+                      <div className="mt-3 truncate text-xs font-semibold text-white sm:mt-4 sm:text-base">{APP_LABELS[item.app]}</div>
+                      <div className="mt-1 hidden text-sm text-white/50 sm:block">{APP_DESCRIPTIONS[item.app]}</div>
                     </button>
                   );
                 })}

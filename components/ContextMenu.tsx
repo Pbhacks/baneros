@@ -13,10 +13,17 @@ export const ContextMenu = () => {
     return null;
   }
 
+  const viewportWidth = typeof window === "undefined" ? 1280 : window.innerWidth;
+  const viewportHeight = typeof window === "undefined" ? 720 : window.innerHeight;
+  const menuWidth = 190;
+  const menuHeight = 188;
+  const x = Math.min(contextMenu.x, viewportWidth - menuWidth - 8);
+  const y = Math.min(contextMenu.y, viewportHeight - menuHeight - 8);
+
   return (
     <div
-      style={{ top: contextMenu.y, left: contextMenu.x }}
-      className="ui-glass-strong fixed z-[90] min-w-44 rounded-xl border p-1 text-sm shadow-2xl"
+      style={{ top: y, left: x }}
+      className="ui-glass-strong fixed z-[1600] min-w-44 rounded-xl border p-1 text-sm shadow-2xl"
       onMouseLeave={() => setContextMenu(null)}
     >
       <button

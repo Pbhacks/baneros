@@ -80,7 +80,13 @@ export const TopBar = () => {
   const activeFolderId = activeDesktop?.activeFolderId ?? "root";
 
   const activeWindow = useMemo(
-    () => activeDesktop?.openWindows.find((item) => item.id === activeDesktop.activeWindowId) ?? null,
+    () => {
+      const current = activeDesktop?.openWindows.find((item) => item.id === activeDesktop.activeWindowId && !item.minimized);
+      if (current) {
+        return current;
+      }
+      return activeDesktop?.openWindows.filter((item) => !item.minimized).sort((a, b) => b.z - a.z)[0] ?? null;
+    },
     [activeDesktop],
   );
   const activeAppLabel = activeWindow ? APP_LABELS[activeWindow.app] : "Finder";
@@ -269,20 +275,20 @@ export const TopBar = () => {
   return (
     <header
       ref={menuRootRef}
-      className="ui-menubar pointer-events-auto fixed left-2 right-2 top-2 z-[1200] flex h-10 items-center justify-between rounded-2xl border px-2.5 text-[12px]"
+      className="ui-menubar pointer-events-auto fixed left-1 right-1 top-1 z-[1200] flex h-10 items-center justify-between rounded-2xl border px-2 text-[12px] sm:left-2 sm:right-2 sm:top-2 sm:px-2.5"
     >
       <div className="flex min-w-0 items-center gap-1.5">
         <button
           type="button"
           onClick={() => openApp("files")}
-          className="flex h-8 w-8 items-center justify-center rounded-xl border border-white/16 bg-white/14 text-white/95"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-white/16 bg-white/14 text-white/95"
           aria-label="Open Finder"
         >
           <Command size={15} />
         </button>
 
-        <div className="flex min-w-0 items-center gap-1 rounded-full bg-black/15 px-3 py-1 text-[11px] shadow-[inset_0_1px_0_rgba(255,255,255,0.16)]">
-          <span className="font-semibold text-white/95">{activeAppLabel}</span>
+        <div className="flex min-w-0 items-center gap-1 rounded-full bg-black/15 px-2.5 py-1 text-[11px] shadow-[inset_0_1px_0_rgba(255,255,255,0.16)] sm:px-3">
+          <span className="max-w-24 truncate font-semibold text-white/95 sm:max-w-none">{activeAppLabel}</span>
           <span className="hidden max-w-40 truncate text-white/60 lg:inline">{activeFolderName}</span>
         </div>
 
@@ -374,7 +380,7 @@ export const TopBar = () => {
           type="button"
           onClick={requestSignIn}
           disabled={busy}
-          className="rounded-full bg-white/12 px-3 py-1 font-medium text-white/86 shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] hover:bg-white/16 disabled:opacity-60"
+          className="hidden rounded-full bg-white/12 px-3 py-1 font-medium text-white/86 shadow-[inset_0_1px_0_rgba(255,255,255,0.14)] hover:bg-white/16 disabled:opacity-60 sm:inline-flex"
         >
           {userId ? "Signed In" : "Sign In"}
         </button>
@@ -393,7 +399,7 @@ export const TopBar = () => {
           <BatteryFull size={13} />
         </div>
 
-        <span className="rounded-full bg-black/16 px-3 py-1 font-semibold tracking-[0.01em] text-white/92">
+        <span className="rounded-full bg-black/16 px-2.5 py-1 font-semibold tracking-[0.01em] text-white/92 sm:px-3">
           {formatMenuClock(time, settings.timezone)}
         </span>
       </div>

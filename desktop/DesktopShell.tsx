@@ -30,7 +30,7 @@ export const DesktopShell = () => {
     store.state.desktops.find((item) => item.id === activeDesktopId),
   );
   const backgroundClass = useWebOSStore((store) => store.state.settings.backgroundClass);
-    const showAtmosphereOverlay = backgroundClass !== "bg-webos-designer";
+  const showAtmosphereOverlay = backgroundClass !== "bg-webos-designer";
 
   const themeMode = useWebOSStore((store) => store.state.settings.themeMode);
   const reduceMotion = useWebOSStore((store) => store.state.settings.reduceMotion);
@@ -161,7 +161,7 @@ export const DesktopShell = () => {
       <WindowManager />
       {dragState.type === "window" && dragState.snapPreview && (
         <div
-          className={`pointer-events-none absolute top-8 z-[58] rounded-xl border-2 border-cyan-300/70 bg-cyan-300/12 ${dragState.snapPreview === "left" ? "left-2 h-[calc(100%-6.5rem)] w-[calc(50%-0.5rem)]" : ""} ${dragState.snapPreview === "right" ? "right-2 h-[calc(100%-6.5rem)] w-[calc(50%-0.5rem)]" : ""} ${dragState.snapPreview === "top" ? "left-2 right-2 h-[calc(100%-6.5rem)]" : ""}`}
+          className={`pointer-events-none absolute top-[54px] z-[58] rounded-[18px] border-2 border-cyan-200/70 bg-cyan-300/12 shadow-[0_0_32px_rgba(103,232,249,0.24)] ${dragState.snapPreview === "left" ? "left-2 h-[calc(100%-4rem)] w-[calc(50%-0.5rem)]" : ""} ${dragState.snapPreview === "right" ? "right-2 h-[calc(100%-4rem)] w-[calc(50%-0.5rem)]" : ""} ${dragState.snapPreview === "top" ? "left-2 right-2 h-[calc(100%-4rem)]" : ""}`}
         />
       )}
       <Dock />

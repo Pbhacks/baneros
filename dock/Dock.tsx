@@ -38,15 +38,15 @@ const DockIcon = ({
     return value - bounds.left - bounds.width / 2;
   });
 
-  const size = useSpring(useTransform(distance, [-180, 0, 180], [54, 72, 54]), {
+  const size = useSpring(useTransform(distance, [-160, 0, 160], [44, 60, 44]), {
     mass: 0.16,
-    stiffness: 260,
-    damping: 18,
+    stiffness: 300,
+    damping: 22,
   });
-  const lift = useSpring(useTransform(distance, [-180, 0, 180], [0, -12, 0]), {
+  const lift = useSpring(useTransform(distance, [-160, 0, 160], [0, -9, 0]), {
     mass: 0.12,
-    stiffness: 240,
-    damping: 18,
+    stiffness: 280,
+    damping: 21,
   });
 
   const Icon = APP_ICON_MAP[app];
@@ -83,7 +83,7 @@ const DockIcon = ({
           type="button"
         >
           <span className="flex h-full w-full items-center justify-center">
-            <Icon size={54} />
+            <Icon size={46} />
           </span>
           {running && <span className="absolute -bottom-2.5 left-1/2 h-1.5 w-4 -translate-x-1/2 rounded-full bg-white/90 shadow-[0_0_10px_rgba(255,255,255,0.85)]" />}
         </button>
@@ -112,8 +112,8 @@ const DockShortcut = ({
       onClick={onClick}
       className={
         bare
-          ? "relative flex h-12 w-12 items-center justify-center text-white/92"
-          : "relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-[16px] border border-white/36 bg-gradient-to-b from-white/40 via-white/20 to-white/8 text-white/92 shadow-[0_10px_20px_rgba(0,0,0,0.22)]"
+          ? "relative flex h-10 w-10 items-center justify-center text-white/92"
+          : "relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-[14px] border border-white/36 bg-gradient-to-b from-white/40 via-white/20 to-white/8 text-white/92 shadow-[0_10px_20px_rgba(0,0,0,0.22)]"
       }
     >
       {!bare && <span className="pointer-events-none absolute inset-x-1.5 top-1.5 h-2.5 rounded-full bg-white/50 blur-[1px]" />}
@@ -141,8 +141,10 @@ export const Dock = () => {
   const openApp = useWebOSStore((store) => store.openApp);
   const toggleSearch = useWebOSStore((store) => store.toggleSearch);
   const [dragActive, setDragActive] = useState(false);
+  const [dockHover, setDockHover] = useState(false);
 
   const runningApps = new Set((desktop?.openWindows ?? []).map((item) => item.app));
+  const fullscreenWindowOpen = Boolean(desktop?.openWindows.some((item) => item.maximized && !item.minimized));
   const dockApps: AppType[] = [...new Set([...pinned, ...recent])];
   const mouseX = useMotionValue(Infinity);
 
@@ -152,67 +154,79 @@ export const Dock = () => {
   };
 
   return (
-    <motion.nav
-      onMouseLeave={() => mouseX.set(Infinity)}
-      onMouseMove={(event) => {
-        mouseX.set(event.clientX);
-      }}
-      onDragOver={(event) => {
-        event.preventDefault();
-        setDragActive(true);
-      }}
-      onDragLeave={() => setDragActive(false)}
-      onDrop={(event) => {
-        const app = event.dataTransfer.getData("application/webos-app") as AppType;
-        if (app) {
-          pinApp(app);
-        }
-        setDragActive(false);
-      }}
-      className={`ui-dock pointer-events-auto fixed bottom-3 left-1/2 z-[1100] -translate-x-1/2 rounded-[28px] border px-4 py-3 ${
-        dragActive ? "ring-2 ring-cyan-200/45" : ""
-      }`}
+    <div
+      className="fixed inset-x-0 bottom-0 z-[1100] flex h-24 items-end justify-center pointer-events-none"
+      onMouseEnter={() => setDockHover(true)}
+      onMouseLeave={() => setDockHover(false)}
     >
-      <span className="pointer-events-none absolute inset-x-8 top-2 h-4 rounded-full bg-white/42 blur-md" />
-      <div className="relative flex items-end gap-2.5">
-        {dockApps.map((app) => (
-          <DockIcon
-            key={app}
-            app={app}
-            mouseX={mouseX}
-            running={runningApps.has(app)}
-            bounce={lastOpenedApp === app}
-            reduceMotion={reduceMotion}
-            highlighted={attention.some(
-              (item) => item.targetType === "dock" && item.targetId === app && item.severity === "critical",
-            )}
-          />
-        ))}
-
-        <div className="mx-1 h-11 w-px rounded-full bg-white/20" />
-
-        <DockShortcut
-          label="Launchpad"
-          icon={
-            <LaunchpadTriangle
-              size={24}
-              className={`transition-transform duration-500 ease-in-out ${searchOpen ? "rotate-180" : "rotate-0"}`}
-            />
+      {fullscreenWindowOpen && (
+        <div className="pointer-events-auto absolute bottom-0 left-1/2 h-6 w-36 -translate-x-1/2 rounded-t-full bg-white/10 backdrop-blur-xl" />
+      )}
+      <motion.nav
+        onMouseLeave={() => mouseX.set(Infinity)}
+        onMouseMove={(event) => {
+          mouseX.set(event.clientX);
+        }}
+        onDragOver={(event) => {
+          event.preventDefault();
+          setDragActive(true);
+        }}
+        onDragLeave={() => setDragActive(false)}
+        onDrop={(event) => {
+          const app = event.dataTransfer.getData("application/webos-app") as AppType;
+          if (app) {
+            pinApp(app);
           }
-          onClick={() => toggleSearch(!searchOpen)}
-          bare
-        />
-        <DockShortcut
-          label="Projects"
-          icon={<FolderOpen size={20} className="text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.25)]" />}
-          onClick={() => openFolderShortcut(PROJECTS_FOLDER_ID)}
-        />
-        <DockShortcut
-          label="Downloads"
-          icon={<Download size={20} className="text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.25)]" />}
-          onClick={() => openFolderShortcut(DOWNLOADS_FOLDER_ID)}
-        />
-      </div>
-    </motion.nav>
+          setDragActive(false);
+        }}
+        animate={fullscreenWindowOpen && !dockHover ? { y: 78, opacity: 0.78 } : { y: 0, opacity: 1 }}
+        whileHover={{ y: 0, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 360, damping: 32, mass: 0.7 }}
+        className={`ui-dock dock-scroll-clean pointer-events-auto mb-3 max-w-[calc(100vw-1rem)] overflow-x-auto overflow-y-visible rounded-[24px] border px-3 py-2 ${
+          dragActive ? "ring-2 ring-cyan-200/45" : ""
+        }`}
+      >
+        <span className="pointer-events-none absolute inset-x-8 top-2 h-3 rounded-full bg-white/38 blur-md" />
+        <div className="relative flex min-w-max items-end gap-2">
+          {dockApps.map((app) => (
+            <DockIcon
+              key={app}
+              app={app}
+              mouseX={mouseX}
+              running={runningApps.has(app)}
+              bounce={lastOpenedApp === app}
+              reduceMotion={reduceMotion}
+              highlighted={attention.some(
+                (item) => item.targetType === "dock" && item.targetId === app && item.severity === "critical",
+              )}
+            />
+          ))}
+
+          <div className="mx-1 h-9 w-px rounded-full bg-white/20" />
+
+          <DockShortcut
+            label="Launchpad"
+            icon={
+              <LaunchpadTriangle
+                size={22}
+                className={`transition-transform duration-500 ease-in-out ${searchOpen ? "rotate-180" : "rotate-0"}`}
+              />
+            }
+            onClick={() => toggleSearch(!searchOpen)}
+            bare
+          />
+          <DockShortcut
+            label="Projects"
+            icon={<FolderOpen size={18} className="text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.25)]" />}
+            onClick={() => openFolderShortcut(PROJECTS_FOLDER_ID)}
+          />
+          <DockShortcut
+            label="Downloads"
+            icon={<Download size={18} className="text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.25)]" />}
+            onClick={() => openFolderShortcut(DOWNLOADS_FOLDER_ID)}
+          />
+        </div>
+      </motion.nav>
+    </div>
   );
 };

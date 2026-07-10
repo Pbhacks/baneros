@@ -29,12 +29,37 @@ import {
 import { loadDesktopState, saveDesktopState } from "@/lib/db";
 import { createSignedFileUrl, pullStateFromCloud, pushStateToCloud } from "@/lib/supabase";
 
-const defaultBounds = (): WindowBounds => ({
-  x: 80 + Math.random() * 120,
-  y: 90 + Math.random() * 90,
-  width: 680,
-  height: 460,
+const getViewportSize = () => ({
+  width: typeof window === "undefined" ? 1280 : window.innerWidth,
+  height: typeof window === "undefined" ? 720 : window.innerHeight,
 });
+
+const defaultBounds = (): WindowBounds => {
+  const viewport = getViewportSize();
+  const compact = viewport.width < 768;
+
+  if (compact) {
+    return {
+      x: 0,
+      y: 44,
+      width: viewport.width,
+      height: viewport.height - 48,
+    };
+  }
+
+  const width = Math.min(760, Math.max(560, viewport.width - 96));
+  const height = Math.min(520, Math.max(360, viewport.height - 148));
+
+  return {
+    x: Math.max(16, Math.round((viewport.width - width) / 2 + (Math.random() - 0.5) * 48)),
+    y: Math.min(
+      Math.max(58, Math.round((viewport.height - height) / 2 + (Math.random() - 0.5) * 40)),
+      Math.max(58, viewport.height - 94 - height),
+    ),
+    width,
+    height,
+  };
+};
 
 const normalizeState = (input: DesktopState): DesktopState => {
   const state: DesktopState = {
@@ -597,7 +622,7 @@ export const useWebOSStore = create<WebOSStore>((set, get) => ({
         launchUrl: args?.launchUrl,
         z: topZ,
         minimized: false,
-        maximized: false,
+        maximized: getViewportSize().width < 768,
         bounds: defaultBounds(),
       };
 
@@ -646,11 +671,19 @@ export const useWebOSStore = create<WebOSStore>((set, get) => ({
   minimizeWindow: (windowId) => {
     set((current) => {
       const desktop = getDesktop(current.state, current.state.activeDesktopId);
+      const target = desktop.openWindows.find((win) => win.id === windowId);
+      const willMinimize = target ? !target.minimized : true;
+      const nextWindows = desktop.openWindows.map((win) =>
+        win.id === windowId ? { ...win, minimized: willMinimize } : win,
+      );
+      const visibleWindows = nextWindows.filter((win) => !win.minimized);
+      const nextActiveId = willMinimize
+        ? visibleWindows.sort((a, b) => b.z - a.z)[0]?.id ?? null
+        : windowId;
       const next = updateDesktop(current.state, desktop.id, (desk) => ({
         ...desk,
-        openWindows: desk.openWindows.map((win) =>
-          win.id === windowId ? { ...win, minimized: !win.minimized } : win,
-        ),
+        openWindows: nextWindows,
+        activeWindowId: nextActiveId,
       }));
       queuePersist(next);
       return { state: next };
@@ -659,10 +692,12 @@ export const useWebOSStore = create<WebOSStore>((set, get) => ({
   maximizeWindow: (windowId) => {
     set((current) => {
       const desktop = getDesktop(current.state, current.state.activeDesktopId);
+      const topZ = desktop.openWindows.reduce((max, item) => (item.z > max ? item.z : max), 0);
       const next = updateDesktop(current.state, desktop.id, (desk) => ({
         ...desk,
+        activeWindowId: windowId,
         openWindows: desk.openWindows.map((win) =>
-          win.id === windowId ? { ...win, maximized: !win.maximized, minimized: false } : win,
+          win.id === windowId ? { ...win, maximized: !win.maximized, minimized: false, z: topZ + 1 } : win,
         ),
       }));
       queuePersist(next);
@@ -705,20 +740,38 @@ export const useWebOSStore = create<WebOSStore>((set, get) => ({
     });
   },
   snapWindow: (windowId, zone) => {
-    const viewportWidth = typeof window === "undefined" ? 1280 : window.innerWidth;
-    const viewportHeight = typeof window === "undefined" ? 720 : window.innerHeight;
+    const { width: viewportWidth, height: viewportHeight } = getViewportSize();
     const bounds: Record<"left" | "right" | "top", WindowBounds> = {
-      left: { x: 10, y: 50, width: (viewportWidth - 24) / 2, height: viewportHeight - 118 },
+      left: { x: 8, y: 54, width: (viewportWidth - 20) / 2, height: viewportHeight - 148 },
       right: {
         x: viewportWidth / 2 + 2,
-        y: 50,
-        width: (viewportWidth - 24) / 2,
-        height: viewportHeight - 118,
+        y: 54,
+        width: (viewportWidth - 20) / 2,
+        height: viewportHeight - 148,
       },
-      top: { x: 10, y: 50, width: viewportWidth - 20, height: viewportHeight - 118 },
+      top: { x: 8, y: 54, width: viewportWidth - 16, height: viewportHeight - 64 },
     };
-    get().updateWindowBounds(windowId, bounds[zone]);
-    get().setDragState({ type: "window", id: windowId, snapPreview: null });
+    set((current) => {
+      const desktop = getDesktop(current.state, current.state.activeDesktopId);
+      const topZ = desktop.openWindows.reduce((max, item) => (item.z > max ? item.z : max), 0);
+      const next = updateDesktop(current.state, desktop.id, (desk) => ({
+        ...desk,
+        activeWindowId: windowId,
+        openWindows: desk.openWindows.map((win) =>
+          win.id === windowId
+            ? {
+                ...win,
+                bounds: bounds[zone],
+                maximized: zone === "top",
+                minimized: false,
+                z: topZ + 1,
+              }
+            : win,
+        ),
+      }));
+      queuePersist(next);
+      return { state: { ...next, dragState: { type: "none", snapPreview: null } } };
+    });
   },
   switchAppWindow: () => {
     const { state, focusWindow } = get();
